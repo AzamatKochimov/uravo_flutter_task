@@ -116,6 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                   }).toList(),
                 ),
               ),
+
               Positioned(
                 top: 10,
                 right: 10,
