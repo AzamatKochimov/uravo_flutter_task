@@ -2,20 +2,44 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:test_uravo/generated/assets.dart';
+import '../controllers/search_provider.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  String searchQuery = "";
-
-  @override
   Widget build(BuildContext context) {
+    final searchProvider = Provider.of<SearchProvider>(context);
+
+    List<Map<String, dynamic>> medicalCenters = [
+      {
+        "title": "AKFA Medline",
+        "address": "г.Ташкент, Мирободский район, Фидокор 38-10",
+        "images": [Assets.imagesMed1, Assets.imagesMed2, Assets.imagesMed3],
+        "rating": "4.9",
+      },
+      {
+        "title": "Shox International Hospital",
+        "address": "г.Ташкент, Мирободский район, Чехов 12",
+        "images": [Assets.imagesMed2, Assets.imagesMed4, Assets.imagesMed5],
+        "rating": "4.9",
+      },
+      {
+        "title": "Medion Family Hospital",
+        "address": "г.Ташкент, Шайхантахурский район, Куча 12",
+        "images": [Assets.imagesMed3, Assets.imagesMed2, Assets.imagesMed1],
+        "rating": "4.9",
+      },
+    ];
+
+    List<Map<String, dynamic>> filteredCenters = medicalCenters
+        .where((center) => center["title"]
+        .toLowerCase()
+        .contains(searchProvider.searchQuery.toLowerCase()))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -23,10 +47,9 @@ class _SearchPageState extends State<SearchPage> {
         title: SizedBox(
           height: 40,
           child: TextField(
+            controller: searchProvider.searchController,
             onChanged: (value) {
-              setState(() {
-                searchQuery = value;
-              });
+              searchProvider.updateSearchQuery(value);
             },
             decoration: InputDecoration(
               hintText: "Search...",
@@ -34,15 +57,13 @@ class _SearchPageState extends State<SearchPage> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: SvgPicture.asset(Assets.iconsSearch, color: Colors.green),
               ),
-              suffixIcon: searchQuery.isNotEmpty
+              suffixIcon: searchProvider.searchQuery.isNotEmpty
                   ? IconButton(
-                      icon: const Icon(CupertinoIcons.clear_circled_solid, color: Colors.grey),
-                      onPressed: () {
-                        setState(() {
-                          searchQuery = '';
-                        });
-                      },
-                    )
+                icon: const Icon(CupertinoIcons.clear_circled_solid, color: Colors.grey),
+                onPressed: () {
+                  searchProvider.clearSearchQuery();
+                },
+              )
                   : null,
               filled: true,
               fillColor: Colors.grey[200],
@@ -52,32 +73,19 @@ class _SearchPageState extends State<SearchPage> {
               ),
               contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             ),
-            controller: TextEditingController(text: searchQuery),
           ),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
-          _buildMedicCard(
-            "AKFA Medline",
-            "г.Ташкент, Мирободский район, Фидокор 38-10",
-            [Assets.imagesMed1, Assets.imagesMed2, Assets.imagesMed3],
-            "4.9",
-          ),
-          _buildMedicCard(
-            "Shox International Hospitalwww",
-            "г.Ташкент, Мирободский район, Чехов 12",
-            [Assets.imagesMed2, Assets.imagesMed4, Assets.imagesMed5],
-            "4.9",
-          ),
-          _buildMedicCard(
-            "Medion Family Hospital",
-            "г.Ташкент, Шайхантахурский район, Куча 12",
-            [Assets.imagesMed3, Assets.imagesMed2, Assets.imagesMed1],
-            "4.9",
-          ),
-        ],
+        children: filteredCenters.map((center) {
+          return _buildMedicCard(
+            center["title"],
+            center["address"],
+            center["images"],
+            center["rating"],
+          );
+        }).toList(),
       ),
     );
   }
@@ -116,7 +124,6 @@ class _SearchPageState extends State<SearchPage> {
                   }).toList(),
                 ),
               ),
-
               Positioned(
                 top: 10,
                 right: 10,

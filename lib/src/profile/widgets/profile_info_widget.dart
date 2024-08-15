@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../generated/assets.dart';
+import '../../../generated/assets.dart';
 
 class ProfileInfoWidget extends StatelessWidget {
   const ProfileInfoWidget({super.key});

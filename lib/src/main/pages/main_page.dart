@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_uravo/src/profile/profile_page.dart';
-import 'package:test_uravo/src/search/search_page.dart';
+import 'package:test_uravo/src/profile/pages/profile_page.dart';
+import 'package:test_uravo/src/search/pages/search_page.dart';
 
 import '../../../generated/assets.dart';
 import 'bottom_navigation_widget.dart';
@@ -34,7 +34,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: _pages[_selectedIndex],
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
